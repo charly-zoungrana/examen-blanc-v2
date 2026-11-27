@@ -1,17 +1,32 @@
 package net.zoungrana;
 
-//TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
-// click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
+import java.util.Arrays;
+import java.util.List;
+
 public class Main {
     public static void main(String[] args) {
-        //TIP Press <shortcut actionId="ShowIntentionActions"/> with your caret at the highlighted text
-        // to see how IntelliJ IDEA suggests fixing it.
-        System.out.printf("Hello and welcome!");
+        Neuron first = new Neuron(0);
+        Neuron second = new Neuron(0);
+        Neuron hidden = new Neuron(0.5);
+        Neuron output = new Neuron(0.125);
 
-        for (int i = 1; i <= 5; i++) {
-            //TIP Press <shortcut actionId="Debug"/> to start debugging your code. We have set one <icon src="AllIcons.Debugger.Db_set_breakpoint"/> breakpoint
-            // for you, but you can always add more by pressing <shortcut actionId="ToggleLineBreakpoint"/>.
-            System.out.println("i = " + i);
+        hidden.connectFrom(first, 0.5);
+        hidden.connectFrom(second, 0.25);
+        output.connectFrom(hidden, 0.5);
+
+        NeuralNetwork network = new NeuralNetwork(
+                new InputLayer(List.of(first, second)),
+                List.of(new HiddenLayer(List.of(hidden))),
+                new OutputLayer(List.of(output)));
+
+        double[] input = {2, 4};
+        double[] result = network.forward(input);
+        System.out.println("Entree : " + Arrays.toString(input));
+        System.out.println("Couche cachee : 2 * 0.5 + 4 * 0.25 + 0.5 = 2.5");
+        System.out.println("Sortie attendue : [1.375]");
+        System.out.println("Sortie calculee : " + Arrays.toString(result));
+        if (result.length != 1 || result[0] != 1.375) {
+            throw new IllegalStateException("Propagation incorrecte.");
         }
     }
 }
