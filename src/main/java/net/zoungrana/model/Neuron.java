@@ -1,15 +1,29 @@
 package net.zoungrana.model;
 
+import net.zoungrana.activation.ActivationFunction;
+import net.zoungrana.activation.Identity;
+
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public final class Neuron {
     private final double bias;
     private final List<Connection> incoming = new ArrayList<>();
     private double output;
+    private ActivationFunction activation;
 
     public Neuron(double bias) {
+        this(bias, new Identity());
+    }
+
+    public Neuron(double bias, ActivationFunction activation) {
         this.bias = bias;
+        setActivation(activation);
+    }
+
+    public void setActivation(ActivationFunction activation) {
+        this.activation = Objects.requireNonNull(activation);
     }
 
     public void connectFrom(Neuron source, double weight) {
@@ -29,7 +43,7 @@ public final class Neuron {
         for (Connection connection : incoming) {
             sum += connection.source().output * connection.weight();
         }
-        output = sum;
+        output = activation.apply(sum);
         return output;
     }
 }
