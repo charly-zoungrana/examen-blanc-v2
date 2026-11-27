@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Objects;
 
 public final class Neuron {
-    private final double bias;
+    private double bias;
     private final List<Connection> incoming = new ArrayList<>();
     private double output;
     private ActivationFunction activation;
@@ -32,6 +32,14 @@ public final class Neuron {
 
     List<Connection> incoming() {
         return List.copyOf(incoming);
+    }
+
+    double bias() {
+        return bias;
+    }
+
+    void setBias(double bias) {
+        this.bias = bias;
     }
 
     void acceptInput(double value) {

@@ -6,6 +6,7 @@ import net.zoungrana.activation.Softmax;
 import net.zoungrana.model.HiddenLayer;
 import net.zoungrana.model.InputLayer;
 import net.zoungrana.model.NeuralNetwork;
+import net.zoungrana.model.NetworkState;
 import net.zoungrana.model.Neuron;
 import net.zoungrana.model.OutputLayer;
 
@@ -30,13 +31,26 @@ public class Main {
                 new OutputLayer(List.of(output)));
 
         double[] input = {2, 4};
-        double[] result = network.forward(input);
+        Dashboard dashboard = new Dashboard();
+        network.subscribe(dashboard);
+        System.out.println("Etat initial : " + network.state());
+        try {
+            network.predict(input);
+            throw new AssertionError("La prediction a ete acceptee avant l'entrainement.");
+        } catch (IllegalStateException expected) {
+            System.out.println("Prediction refusee avant entrainement : " + expected.getMessage());
+        }
+        network.fit();
+        network.stop();
+        network.train(new double[][]{input, {4, 4}}, new double[][]{{2}, {2.5}});
+        double[] result = network.predict(input);
         System.out.println("Entree : " + Arrays.toString(input));
-        System.out.println("Couche cachee : 2 * 0.5 + 4 * 0.25 + 0.5 = 2.5");
-        System.out.println("Sortie attendue : [1.375]");
-        System.out.println("Sortie calculee : " + Arrays.toString(result));
-        if (result.length != 1 || result[0] != 1.375) {
-            throw new IllegalStateException("Propagation incorrecte.");
+        System.out.println("Sortie initiale theorique : [1.375]");
+        System.out.println("Cible : [2.0]");
+        System.out.println("Prediction apres entrainement : " + Arrays.toString(result));
+        if (network.state() != NetworkState.TRAINED || dashboard.transitions() != 4
+                || result.length != 1 || Math.abs(result[0] - 2.0) > 1e-6) {
+            throw new IllegalStateException("Cycle de vie ou entrainement incorrect.");
         }
         demonstrateActivations();
     }

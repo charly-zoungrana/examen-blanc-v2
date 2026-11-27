@@ -31,3 +31,7 @@
 Le sujet précise le départ de `fit()` et de `train()`. La conception ajoute `stop()` pour relier explicitement `Exécution` à `Arrêt`. Dans ce modèle, `Exécution` indique que la topologie est validée. La prédiction devient accessible après l’entraînement.
 
 Les flèches en pointillés des aspects indiquent les opérations interceptées, les pointes triangulaires creuses représentent les réalisations ou héritages et les losanges pleins indiquent les compositions.
+
+## Question 2 — Implémentation
+
+L’application `net.zoungrana.Main` montre le refus de prédire en construction, les quatre transitions observées par le tableau de bord et une prédiction après entraînement. L’entraînement minimise l’erreur quadratique sur les exemples fournis en ajustant les biais de sortie par recherche par coordonnées. Les poids des connexions sont fixés à la construction. Dans la démo, l’ajustement fait passer la sortie de `1.375` à la cible `2.0` pour l’entrée `[2.0, 4.0]`.
