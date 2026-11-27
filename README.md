@@ -35,3 +35,19 @@ Les flèches en pointillés des aspects indiquent les opérations interceptées,
 ## Question 2 — Implémentation
 
 L’application `net.zoungrana.Main` montre le refus de prédire en construction, les quatre transitions observées par le tableau de bord et une prédiction après entraînement. L’entraînement minimise l’erreur quadratique sur les exemples fournis en ajustant les biais de sortie par recherche par coordonnées. Les poids des connexions sont fixés à la construction. Dans la démo, l’ajustement fait passer la sortie de `1.375` à la cible `2.0` pour l’entrée `[2.0, 4.0]`.
+
+### Exécuter la démonstration avec les aspects
+
+Dans le dossier Maven `examen-blanc`, exécuter avec le JDK 21.
+
+```powershell
+mvn -q compile exec:java
+```
+
+Pour afficher les dernières traces, activer la journalisation des méthodes et garder les lignes de fin.
+
+```powershell
+mvn -q '-Dnetwork.trace=true' compile exec:java | Select-Object -Last 30
+```
+
+Maven tisse les aspects à la compilation avec AspectJ. Le rôle de démonstration est fourni par `Main` à travers `NetworkAccess`. Le contrôle d’accès exige le rôle `OPERATOR` pour construire le cycle de vie, entraîner, prédire ou décorer le réseau. La démo vérifie le refus pour `VIEWER` et le succès de la prédiction pour `OPERATOR`.

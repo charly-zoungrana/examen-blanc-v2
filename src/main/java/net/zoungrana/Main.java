@@ -3,6 +3,7 @@ package net.zoungrana;
 import net.zoungrana.activation.ActivationAdapter;
 import net.zoungrana.activation.Sigmoid;
 import net.zoungrana.activation.Softmax;
+import net.zoungrana.aspect.NetworkAccess;
 import net.zoungrana.decorator.TimedLayer;
 import net.zoungrana.model.HiddenLayer;
 import net.zoungrana.model.InputLayer;
@@ -18,6 +19,10 @@ import java.util.Locale;
 
 public class Main {
     public static void main(String[] args) {
+        NetworkAccess.runAs(NetworkAccess.Role.OPERATOR, Main::demonstrateNetwork);
+    }
+
+    private static void demonstrateNetwork() {
         Neuron first = new Neuron(0);
         Neuron second = new Neuron(0);
         Neuron hidden = new Neuron(0.5);
@@ -56,6 +61,20 @@ public class Main {
         }
         demonstrateActivations();
         demonstrateDecorator(network, input, result);
+        demonstrateSecurity(network, input);
+    }
+
+    private static void demonstrateSecurity(NeuralNetwork network, double[] input) {
+        System.out.println("\nControle d'acces");
+        NetworkAccess.runAs(NetworkAccess.Role.VIEWER, () -> {
+            try {
+                network.predict(input);
+                throw new AssertionError("Un VIEWER ne doit pas pouvoir predire.");
+            } catch (SecurityException expected) {
+                System.out.println("VIEWER : " + expected.getMessage());
+            }
+        });
+        System.out.println("OPERATOR : prediction autorisee " + Arrays.toString(network.predict(input)));
     }
 
     private static void demonstrateDecorator(NeuralNetwork network, double[] input, double[] expected) {
