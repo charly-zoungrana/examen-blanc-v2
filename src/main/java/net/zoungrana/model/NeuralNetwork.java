@@ -1,13 +1,17 @@
 package net.zoungrana.model;
 
+import net.zoungrana.decorator.LayerDecorator;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
+import java.util.function.Function;
 
 public final class NeuralNetwork {
     private final List<AbstractLayer> layers;
+    private final List<Layer> forwardLayers;
     private final List<NetworkObserver> observers = new ArrayList<>();
     private NetworkState state = NetworkState.CONSTRUCTION;
 
@@ -17,6 +21,12 @@ public final class NeuralNetwork {
         ordered.addAll(hidden);
         ordered.add(output);
         layers = List.copyOf(ordered);
+        forwardLayers = new ArrayList<>(layers);
+    }
+
+    public void decorateLayer(int index, Function<Layer, ? extends LayerDecorator> decorator) {
+        Layer current = forwardLayers.get(index);
+        forwardLayers.set(index, Objects.requireNonNull(decorator.apply(current)));
     }
 
     public NetworkState state() {
@@ -137,7 +147,7 @@ public final class NeuralNetwork {
 
     double[] forward(double[] input) {
         double[] values = input;
-        for (Layer layer : layers) {
+        for (Layer layer : forwardLayers) {
             values = layer.forward(values);
         }
         return values;

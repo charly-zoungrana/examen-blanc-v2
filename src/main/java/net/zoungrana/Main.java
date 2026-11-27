@@ -3,6 +3,7 @@ package net.zoungrana;
 import net.zoungrana.activation.ActivationAdapter;
 import net.zoungrana.activation.Sigmoid;
 import net.zoungrana.activation.Softmax;
+import net.zoungrana.decorator.TimedLayer;
 import net.zoungrana.model.HiddenLayer;
 import net.zoungrana.model.InputLayer;
 import net.zoungrana.model.NeuralNetwork;
@@ -10,6 +11,7 @@ import net.zoungrana.model.NetworkState;
 import net.zoungrana.model.Neuron;
 import net.zoungrana.model.OutputLayer;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
@@ -53,6 +55,20 @@ public class Main {
             throw new IllegalStateException("Cycle de vie ou entrainement incorrect.");
         }
         demonstrateActivations();
+        demonstrateDecorator(network, input, result);
+    }
+
+    private static void demonstrateDecorator(NeuralNetwork network, double[] input, double[] expected) {
+        System.out.println("\nDecorateur de chronometrage");
+        List<Long> durations = new ArrayList<>();
+        network.decorateLayer(1, layer -> new TimedLayer(layer, durations::add));
+        double[] withTiming = network.predict(input);
+        if (durations.size() != 1 || !Arrays.equals(expected, withTiming)) {
+            throw new IllegalStateException("Le decorateur doit chronometrer une seule propagation et preserver la sortie.");
+        }
+        System.out.printf("Couche cachee : %d ns%n", durations.getFirst());
+        System.out.printf("Prediction sans / avec decorateur : %s / %s%n",
+                Arrays.toString(expected), Arrays.toString(withTiming));
     }
 
     private static void demonstrateActivations() {
