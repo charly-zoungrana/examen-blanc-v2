@@ -1,4 +1,4 @@
-package net.zoungrana;
+package net.zoungrana.model;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,7 +14,7 @@ public final class NeuralNetwork {
         layers = List.copyOf(ordered);
     }
 
-    double[] forward(double[] input) {
+    public double[] forward(double[] input) {
         double[] values = input;
         for (Layer layer : layers) {
             values = layer.forward(values);

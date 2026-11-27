@@ -1,5 +1,11 @@
 package net.zoungrana;
 
+import net.zoungrana.model.HiddenLayer;
+import net.zoungrana.model.InputLayer;
+import net.zoungrana.model.NeuralNetwork;
+import net.zoungrana.model.Neuron;
+import net.zoungrana.model.OutputLayer;
+
 import java.util.Arrays;
 import java.util.List;
 

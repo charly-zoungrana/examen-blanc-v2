@@ -1,4 +1,4 @@
-package net.zoungrana;
+package net.zoungrana.model;
 
 import java.util.List;
 
